@@ -1,6 +1,6 @@
 # 🍷 Vinheria Agnello - Microservices
 
-Projeto completo de microserviços para simular o ambiente da **Vinheria Agnello** com comunicação HTTPS, DNS interno e autenticação JWT.
+Projeto simulação de microserviços para simular o ambiente da **Vinheria Agnello** com comunicação HTTPS, DNS interno e autenticação JWT.
 
 ## 📋 Arquitetura
 
