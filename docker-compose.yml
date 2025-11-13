@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  dns:
+    build: ./dns
+    container_name: vinheria-dns
+    networks:
+      vinheria-network:
+        ipv4_address: 172.20.0.2
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "53:53/udp"
+    restart: unless-stopped
+
+  sales-service:
+    build: ./sales-service
+    container_name: vinheria-sales
+    depends_on:
+      - dns
+    networks:
+      vinheria-network:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "3000:3000"
+    environment:
+      - INVENTORY_URL=https://inventory.vinheria.local:3001
+      - JWT_SECRET=vinheria-secret
+    dns:
+      - 172.20.0.2
+    volumes:
+      - ./certs:/app/certs:ro
+    restart: unless-stopped
+
+  inventory-service:
+    build: ./inventory-service
+    container_name: vinheria-inventory
+    depends_on:
+      - dns
+    networks:
+      vinheria-network:
+        ipv4_address: 172.20.0.11
+    ports:
+      - "3001:3001"
+    environment:
+      - JWT_SECRET=vinheria-secret
+    dns:
+      - 172.20.0.2
+    volumes:
+      - ./certs:/app/certs:ro
+    restart: unless-stopped
+
+networks:
+  vinheria-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
